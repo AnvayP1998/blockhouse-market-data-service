@@ -20,30 +20,46 @@ A production-style market data microservice for Blockhouse Capital. Built with F
 
 ## Architecture Diagram
 
-               +--------------------+
-               |  User / Client     |
-               +---------+----------+
-                         |
-                   REST  |
-                         v
-      +--------------------------+
-      |      FastAPI App         |
-      | - /prices/latest         |
-      | - /prices/poll           |
-      +--------------------------+
-          |                 |
+    +--------------+        REST API         +-------------------+
+    | User/Client  | <-------------------->  |  FastAPI Service  |
+    +--------------+                        | /prices/latest     |
+                                            | /prices/poll       |
+                                            +-------------------+
+                                                    |
+                                  +-----------------+------------------+
+                         (SQLAlchemy)              |      Kafka Producer
+                                                    v
+                      +-------------------+   +------------------------+
+                      |   PostgreSQL      |   |  Kafka: price-events   |
+                      | raw_market_data   |<--|  (topic for events)    |
+                      +-------------------+   +------------------------+
+                                                     |
+                                                Kafka Consumer
+                                                     v
+                                     +-----------------------------+
+                                     | Compute Moving Average      |
+                                     | Insert into moving_averages |
+                                     +-----------------------------+
+## Setup Instructions
+1) Clone the repository:
+git clone https://github.com/<your-username>/blockhouse-market-data-service.git
+cd blockhouse-market-data-service
+2) Create and activate a virtual environment:
+python -m venv venv
+# On Linux/Mac:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+3) Install Python dependencies:
+pip install -r requirements.txt
+4) Start all services with Docker Compose:
+docker compose up -d
+5) Initialize the database:
+python -m app.models.db
+6) Run the FastAPI application:
+uvicorn app.main:app --reload
+- Visit http://127.0.0.1:8000/docs for Swagger API docs.
+7) Run the Kafka consumer (in a new terminal):
+python -m scripts.kafka_consumer
 
-(SQLAlchemy) | (Kafka producer)
-v v
-+----------------+ +------------------+
-| PostgreSQL | | Kafka Topic: |
-| raw_market_data|<--| price-events |
-+----------------+ +------------------+
-|
-(Kafka consumer)
-v
-+-------------------------+
-| Compute Moving Average |
-| Insert into Postgres |
-| moving_averages |
-+-------------------------+
+
