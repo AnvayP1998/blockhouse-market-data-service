@@ -297,21 +297,6 @@ docker run --rm -it \
 
 # 10. (Optional) Export API collection for Postman/Insomnia
 #   Download /openapi.json or export from docs page
-
-# 11. (Optional) Push to GitHub to trigger CI/CD (if you have actions configured)
-git add .
-git commit -m "Final project polish: tests, lint, docs"
-git push origin main  # Or whatever branch you’re using
-
-# 12. (Optional) Record a 5-minute demo video
-#   Show API docs, test endpoints, Kafka/DB integration, explain the design
-
-# 13. (Assignment Submission) Add Yuvraj1907 as a collaborator on GitHub
-#   Go to GitHub repo > Settings > Manage access > Invite collaborator
-
-# --- ALL DONE ---
-```
-
 ---
 
 ## Troubleshooting
