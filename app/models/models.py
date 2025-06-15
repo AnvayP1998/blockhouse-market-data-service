@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, JSON, DateTime
 import datetime
 from sqlalchemy import Float
 
@@ -23,11 +23,12 @@ class MovingAverage(Base):
     avg_price = Column(Float)
     window_size = Column(Integer)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow)
-
-class PollingJob(Base):
-    __tablename__ = 'polling_jobs'
+    
+class PollingJobConfig(Base):
+    __tablename__ = "polling_job_configs"
     id = Column(Integer, primary_key=True, index=True)
-    symbol = Column(String, index=True)
+    symbols = Column(JSON)
+    interval = Column(Integer)  # in seconds
     provider = Column(String)
-    interval_minutes = Column(Integer)
+    status = Column(String, default="active")
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

@@ -2,8 +2,9 @@ from confluent_kafka import Producer
 import json
 
 KAFKA_CONFIG = {
-    'bootstrap.servers': 'localhost:9092',
+    'bootstrap.servers': 'kafka:9092',
 }
+print("KAFKA_CONFIG:", KAFKA_CONFIG)
 
 producer = Producer(KAFKA_CONFIG)
 

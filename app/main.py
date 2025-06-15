@@ -1,9 +1,12 @@
+import app.services.kafka_producer
 from app.services.market_data import fetch_and_save_price
 from fastapi import FastAPI
 from app.services.market_data import fetch_price_with_cache
 from pydantic import BaseModel
 from app.models.models import PollingJob
 from app.core.db_session import SessionLocal
+from app.api import prices
+app.include_router(prices.router)
 
 app = FastAPI()
 class PollRequest(BaseModel):

@@ -1,16 +1,23 @@
-import yfinance as yf
+from app.services.yfinance_provider import YFinanceProvider
 from app.models.models import RawMarketData
 from app.core.db_session import SessionLocal
 import datetime
 from sqlalchemy import desc
-import datetime
 from app.services.kafka_producer import publish_price_event
+
+# Optionally add import for other providers here
 
 def fetch_and_save_price(symbol, provider="yfinance"):
     try:
-        data = yf.Ticker(symbol)
-        price = data.history(period="1d").tail(1)["Close"].values[0]
-        price = float(price)  # <-- FIX
+        # --- Use abstraction to pick provider ---
+        if provider == "yfinance":
+            provider_instance = YFinanceProvider()
+        # (future) elif provider == "alpha_vantage":
+        #     provider_instance = AlphaVantageProvider()
+        else:
+            raise Exception(f"Unknown provider: {provider}")
+
+        price = provider_instance.get_price(symbol)
         timestamp = datetime.datetime.utcnow()
         db = SessionLocal()
         record = RawMarketData(
